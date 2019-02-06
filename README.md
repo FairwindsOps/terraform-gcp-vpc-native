@@ -1,10 +1,43 @@
 # Terraform GCP VPC-Native Network Module
-This repository contains the standards for GKE cluster implementations, and is a work in progress. The GKE cluster module should be adaptable. Ideally, it should allow for public "standard" GKE clusters, public/VPC-native clusters, and private/VPC-native clusters. This module will only contain GKE-related terraform resources. Underlying network resources will be created in separate modules in separate repositories, which will have to be used in conjunction with this module/repository to create a complete infrastructure. [add links to these network module repos as they are created]
+This repository contains VPC configuration intended for use with VPC-native GKE clusters created with the [terraform-gke](https://github.com/reactiveops/terraform-gke) module. The `default` directory contains a standard VPC module intended for use with VPC-native GKE clusters, which has public networking.
 
-This repository contains VPC configuration intended for use with public VPC-native GKE clusters created with the [terraform-gke](https://github.com/reactiveops/terraform-gke) module. It will create a VPC, a CI subnet, a staging subnet, and a production subnet with all necessary secondary ranges for each to be used by GKE. 
 
-## Usage
-* Expand on the parameters necessary for spin-up
+## How to source modules from this repository
+* Just add a `network.tf` file to the `terraform` directory of your inventory item that sources the module:
+```
+.
+├── inventory
+│   └── staging
+│       ├── config
+│       └── terraform
+            ├── backend.tf
+            ├── network.tf <-- add this file
+            └── provider.tf
+```
+
+### Default module example parameters
+To use the `default` module with a VPC-native-ready public network, you'd fill out your `network.tf` like so: 
+
+```
+module "network" {
+  source = "git@github.com:reactiveops/terraform-gcp-vpc-native/default?ref=v.0.0.1"
+  // base network parameters
+  network_name               = "project-kube-staging-1"
+  subnetwork_name            = "project-staging-1"
+  region                     = "us-central1"
+
+  //specify the staging subnetwork primary and secondary CIDRs for IP aliasing
+  subnetwork_range     = "10.128.0.0/20"
+  subnetwork_pods      = "10.128.64.0/18"
+  subnetwork_services  = "10.128.32.0/20"
+
+}
+```
+
+### Secondary range notes
+To set up a VPC-native cluster, you have to configure two secondary ranges for each subnetwork in addition to the standard subnet range. One secondary range is used for allocating IP addresses to pods while the other is used for allocating IP addresses to cluster services.  With this module, you specify these ranges as `subnetwork_range`, `subnetwork_pods`, and `subnetwork_services`. The example ranges given above are a good default size -- it allows for 4,092 nodes, 4,092 services, and 16,382 pods per subnetwork in the subnetwork. 
+
+
 * Short details on spinning up with terraform and viewing outputs necessary for the `terraform-gke` module. 
 
 ## Contributing
