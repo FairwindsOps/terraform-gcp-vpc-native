@@ -47,6 +47,8 @@ resource "google_compute_subnetwork" "subnetwork" {
   ip_cidr_range = "${var.subnetwork_range}"
   network       = "${google_compute_network.network.self_link}"
   region        = "${var.region}"
+  private_ip_google_access = true
+
   secondary_ip_range = {
     range_name = "gke-pods-1"
     ip_cidr_range = "${var.subnetwork_pods}"
@@ -70,14 +72,14 @@ output "subnetwork_pods" {
   value = "${var.subnetwork_pods}"
 }
 
+output "subnetwork_range" {
+  value = "${var.subnetwork_range}"
+}
+
 output "gke_pods_1" {
   value = "gke-pods-1"
 }
 
 output "gke_services_1" {
   value = "gke-services-1"
-}
-
-output "gke_other_1" {
-  value = "gke-other-1"
 }
