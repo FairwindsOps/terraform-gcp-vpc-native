@@ -26,6 +26,9 @@ variable "region" {
   description = "region to use"
 }
 
+variable "enable_flow_logs" {
+  description = "whether to turn on flow logs or not"
+}
 
 
 #######################
@@ -41,18 +44,19 @@ resource "google_compute_network" "network" {
 /* note that for secondary ranges necessary for GKE Alias IPs, the ranges have
  to be manually specificied with terraform currently -- no GKE automagic allowed here. */
 resource "google_compute_subnetwork" "subnetwork" {
-  name          = "${var.subnetwork_name}"
-  ip_cidr_range = "${var.subnetwork_range}"
-  network       = "${google_compute_network.network.self_link}"
-  region        = "${var.region}"
+  name                     = "${var.subnetwork_name}"
+  ip_cidr_range            = "${var.subnetwork_range}"
+  network                  = "${google_compute_network.network.self_link}"
+  region                   = "${var.region}"
   private_ip_google_access = true
+  enable_flow_logs         = "${var.enable_flow_logs}"
 
   secondary_ip_range = {
-    range_name = "gke-pods-1"
+    range_name    = "gke-pods-1"
     ip_cidr_range = "${var.subnetwork_pods}"
   }
   secondary_ip_range = {
-    range_name = "gke-services-1"
+    range_name    = "gke-services-1"
     ip_cidr_range = "${var.subnetwork_services}"
   }
 

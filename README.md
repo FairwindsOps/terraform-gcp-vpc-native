@@ -25,6 +25,7 @@ module "network" {
   network_name               = "project-kube-staging-1"
   subnetwork_name            = "project-staging-1"
   region                     = "us-central1"
+  enable_flow_logs           = "false"
 
   //specify the staging subnetwork primary and secondary CIDRs for IP aliasing
   subnetwork_range     = "10.128.0.0/20"
