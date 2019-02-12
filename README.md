@@ -35,6 +35,29 @@ module "network" {
 }
 ```
 
+### Cloud NAT module example parameters
+The `cloud-nat` module is similar to the `default` module, but it additionally creates a Cloud Router and Cloud NAT. Cloud NAT is a managed offering that provides a managed NAT gateway for the network. You can use this module to build a VPC-native GKE cluster with private nodes that have no public IP addresses. Internet traffic from the nodes is routed through the Cloud NAT.
+
+The set up is the same as for the default module. You'd fill out the network.tf like so, specifying the path of the cloud-nat module instead:
+
+```
+```
+module "network" {
+  source = "git@github.com:reactiveops/terraform-gcp-vpc-native.git//cloud-nat?ref=v0.0.1"
+  // base network parameters
+  network_name               = "project-kube-staging-1"
+  subnetwork_name            = "project-staging-1"
+  region                     = "us-central1"
+  enable_flow_logs           = "false"
+
+  //specify the staging subnetwork primary and secondary CIDRs for IP aliasing
+  subnetwork_range     = "10.128.0.0/20"
+  subnetwork_pods      = "10.128.64.0/18"
+  subnetwork_services  = "10.128.32.0/20"
+
+}
+```
+
 ### Secondary range notes
 To set up a VPC-native cluster, you have to configure two secondary ranges for each subnetwork in addition to the standard subnet range. One secondary range is used for allocating IP addresses to pods while the other is used for allocating IP addresses to cluster services.  With this module, you specify these ranges as `subnetwork_range`, `subnetwork_pods`, and `subnetwork_services`. `subnetwork_range` is the range of IP addresses for the GKE nodes themselves; `subnetwork_pods` is the range of IP addresses for the pods; `subnetwork_services` is the range for Kubernetes cluster services.
 
