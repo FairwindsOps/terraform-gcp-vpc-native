@@ -35,10 +35,10 @@ module "network" {
 ```
 
 ### Secondary range notes
-To set up a VPC-native cluster, you have to configure two secondary ranges for each subnetwork in addition to the standard subnet range. One secondary range is used for allocating IP addresses to pods while the other is used for allocating IP addresses to cluster services.  With this module, you specify these ranges as `subnetwork_range`, `subnetwork_pods`, and `subnetwork_services`. The example ranges given above are a good default size -- it allows for 4,092 nodes, 4,092 services, and 16,382 pods per subnetwork in the subnetwork. Refer to Google Cloud's docs [here](https://cloud.google.com/kubernetes-engine/docs/how-to/alias-ips) on other sizing options.
+To set up a VPC-native cluster, you have to configure two secondary ranges for each subnetwork in addition to the standard subnet range. One secondary range is used for allocating IP addresses to pods while the other is used for allocating IP addresses to cluster services.  With this module, you specify these ranges as `subnetwork_range`, `subnetwork_pods`, and `subnetwork_services`. `subnetwork_range` is the range of IP addresses for the GKE nodes themselves; `subnetwork_pods` is the range of IP addresses for the pods; `subnetwork_services` is the range for Kubernetes cluster services.
 
+The example ranges given above are a good default size -- it allows for 4,092 nodes, 4,092 services, and 16,382 pods per subnetwork in the subnetwork. Refer to Google Cloud's docs [here](https://cloud.google.com/kubernetes-engine/docs/how-to/alias-ips) on other sizing options. The ranges given do not have to be contiguous, but they must not overlap.
 
-* Short details on spinning up with terraform and viewing outputs necessary for the `terraform-gke` module. 
 
 ## Contributing
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
