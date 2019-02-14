@@ -15,25 +15,7 @@ This repository contains VPC configuration intended for use with VPC-native GKE 
             └── provider.tf
 ```
 
-### Default module example parameters
-To use the `default` module with a VPC-native-ready public network, you'd fill out your `network.tf` like so: 
-
-```
-module "network" {
-  source = "git@github.com:reactiveops/terraform-gcp-vpc-native.git//default?ref=v0.0.1"
-  // base network parameters
-  network_name               = "project-kube-staging-1"
-  subnetwork_name            = "project-staging-1"
-  region                     = "us-central1"
-  enable_flow_logs           = "false"
-
-  //specify the staging subnetwork primary and secondary CIDRs for IP aliasing
-  subnetwork_range     = "10.128.0.0/20"
-  subnetwork_pods      = "10.128.64.0/18"
-  subnetwork_services  = "10.128.32.0/20"
-
-}
-```
+See the individual module's README.md for an example of sourcing it (including all parameters to define.) 
 
 ### Secondary range notes
 To set up a VPC-native cluster, you have to configure two secondary ranges for each subnetwork in addition to the standard subnet range. One secondary range is used for allocating IP addresses to pods while the other is used for allocating IP addresses to cluster services.  With this module, you specify these ranges as `subnetwork_range`, `subnetwork_pods`, and `subnetwork_services`. `subnetwork_range` is the range of IP addresses for the GKE nodes themselves; `subnetwork_pods` is the range of IP addresses for the pods; `subnetwork_services` is the range for Kubernetes cluster services.
