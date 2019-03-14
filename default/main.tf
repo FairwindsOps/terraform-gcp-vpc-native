@@ -42,7 +42,7 @@ resource "google_compute_network" "network" {
 }
 
 /* note that for secondary ranges necessary for GKE Alias IPs, the ranges have
- to be manually specificied with terraform currently -- no GKE automagic allowed here. */
+ to be manually specified with terraform currently -- no GKE automagic allowed here. */
 resource "google_compute_subnetwork" "subnetwork" {
   name                     = "${var.subnetwork_name}"
   ip_cidr_range            = "${var.subnetwork_range}"
@@ -67,6 +67,10 @@ resource "google_compute_subnetwork" "subnetwork" {
   }
 }
 /** provide outputs to be used in GKE cluster creation **/
+output "network" {
+  value = "${google_compute_network.network.self_link}"
+}
+
 output "subnetwork" {
   value = "${google_compute_subnetwork.subnetwork.self_link}"
 }
