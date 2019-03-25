@@ -30,7 +30,6 @@ variable "enable_flow_logs" {
   description = "whether to turn on flow logs or not"
 }
 
-
 #######################
 # Create the network and subnetworks, including secondary IP ranges on subnetworks
 #######################
@@ -55,15 +54,16 @@ resource "google_compute_subnetwork" "subnetwork" {
     range_name    = "gke-pods-1"
     ip_cidr_range = "${var.subnetwork_pods}"
   }
+
   secondary_ip_range = {
     range_name    = "gke-services-1"
     ip_cidr_range = "${var.subnetwork_services}"
   }
 
   /* We ignore changes on secondary_ip_range because terraform doesn't list
-  them in the same order every time during runs. */
+    them in the same order every time during runs. */
   lifecycle {
-    ignore_changes = [ "secondary_ip_range" ]
+    ignore_changes = ["secondary_ip_range"]
   }
 }
 
@@ -82,7 +82,7 @@ resource "google_compute_router_nat" "nat_router" {
 }
 
 /** provide outputs to be used in GKE cluster creation **/
-output "network" {
+output "network_self_link" {
   value = "${google_compute_network.network.self_link}"
 }
 
@@ -90,7 +90,11 @@ output "subnetwork" {
   value = "${google_compute_subnetwork.subnetwork.self_link}"
 }
 
-output "router" {
+output "subnetwork_self_link" {
+  value = "${google_compute_subnetwork.subnetwork.self_link}"
+}
+
+output "router_self_link" {
   value = "${google_compute_router.router.self_link}"
 }
 
