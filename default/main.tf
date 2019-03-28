@@ -30,12 +30,18 @@ variable "enable_flow_logs" {
   description = "whether to turn on flow logs or not"
 }
 
+variable "network_description" {
+  default = ""
+  description = "a description for the VPC in the GCP Console"
+}
+
 #######################
 # Create the network and subnetworks, including secondary IP ranges on subnetworks
 #######################
 
 resource "google_compute_network" "network" {
   name                    = "${var.network_name}"
+  description             = "${var.description}"
   routing_mode            = "GLOBAL"
   auto_create_subnetworks = "false"
 }
