@@ -41,7 +41,7 @@ variable "network_description" {
 
 resource "google_compute_network" "network" {
   name                    = "${var.network_name}"
-  description             = "${var.description}"
+  description             = "${var.network_description}"
   routing_mode            = "GLOBAL"
   auto_create_subnetworks = "false"
 }
