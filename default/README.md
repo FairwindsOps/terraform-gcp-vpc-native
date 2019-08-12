@@ -3,7 +3,7 @@ To use the `default` module with a VPC-native-ready public network, you'd fill o
 
 ```
 module "network" {
-  source = "git@github.com:reactiveops/terraform-gcp-vpc-native.git//default?ref=v0.0.1"
+  source = "git@github.com:FairwindsOps/terraform-gcp-vpc-native.git//default?ref=v0.0.1"
   // base network parameters
   network_name               = "project-kube-staging-1"
   subnetwork_name            = "project-staging-1"
