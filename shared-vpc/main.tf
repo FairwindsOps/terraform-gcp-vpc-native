@@ -107,7 +107,7 @@ output "shared_vpc" {
 
 /* production network details */
 output "prod_subnetwork" {
-  value = "${google_compute_subnetwork.prod_subnetwork.self_link}"
+  value = "${google_compute_subnetwork.prod_subnetwork.name}"
 }
 
 output "prod_subnetwork_pods" {
@@ -124,7 +124,7 @@ output "prod_gke_services_1" {
 
 /*staging network details */
 output "staging_subnetwork" {
-  value = "${google_compute_subnetwork.staging_subnetwork.self_link}"
+  value = "${google_compute_subnetwork.staging_subnetwork.name}"
 }
 
 output "staging_subnetwork_pods" {
