@@ -4,7 +4,6 @@ The `cloud-nat` module is similar to the `default` module, but it additionally c
 The set up is the same as for the default module. You'd fill out the network.tf like so, specifying the path of the cloud-nat module instead:
 
 ```
-```
 module "network" {
   source = "git@github.com:FairwindsOps/terraform-gcp-vpc-native.git//cloud-nat?ref=v0.0.1"
   // base network parameters

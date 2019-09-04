@@ -35,75 +35,75 @@ variable "enable_flow_logs" {
 #######################
 
 resource "google_compute_network" "network" {
-  name                    = "${var.network_name}"
+  name                    = var.network_name
   routing_mode            = "GLOBAL"
-  auto_create_subnetworks = "false"
+  auto_create_subnetworks = false
 }
 
 /* note that for secondary ranges necessary for GKE Alias IPs, the ranges have
  to be manually specified with terraform currently -- no GKE automagic allowed here. */
 resource "google_compute_subnetwork" "subnetwork" {
-  name                     = "${var.subnetwork_name}"
-  ip_cidr_range            = "${var.subnetwork_range}"
-  network                  = "${google_compute_network.network.self_link}"
-  region                   = "${var.region}"
+  name                     = var.subnetwork_name
+  ip_cidr_range            = var.subnetwork_range
+  network                  = google_compute_network.network.self_link
+  region                   = var.region
   private_ip_google_access = true
-  enable_flow_logs         = "${var.enable_flow_logs}"
+  enable_flow_logs         = var.enable_flow_logs
 
-  secondary_ip_range = {
+  secondary_ip_range {
     range_name    = "gke-pods-1"
-    ip_cidr_range = "${var.subnetwork_pods}"
+    ip_cidr_range = var.subnetwork_pods
   }
 
-  secondary_ip_range = {
+  secondary_ip_range {
     range_name    = "gke-services-1"
-    ip_cidr_range = "${var.subnetwork_services}"
+    ip_cidr_range = var.subnetwork_services
   }
 
   /* We ignore changes on secondary_ip_range because terraform doesn't list
     them in the same order every time during runs. */
   lifecycle {
-    ignore_changes = ["secondary_ip_range"]
+    ignore_changes = [secondary_ip_range]
   }
 }
 
 resource "google_compute_router" "router" {
-  name    = "${var.network_name}"
-  network = "${google_compute_network.network.name}"
-  region  = "${var.region}"
+  name    = var.network_name
+  network = google_compute_network.network.name
+  region  = var.region
 }
 
 resource "google_compute_router_nat" "nat_router" {
-  name                               = "${var.network_name}"
-  router                             = "${google_compute_router.router.name}"
-  region                             = "${var.region}"
+  name                               = var.network_name
+  router                             = google_compute_router.router.name
+  region                             = var.region
   nat_ip_allocate_option             = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
 
 /** provide outputs to be used in GKE cluster creation **/
 output "network_self_link" {
-  value = "${google_compute_network.network.self_link}"
+  value = google_compute_network.network.self_link
 }
 
 output "subnetwork" {
-  value = "${google_compute_subnetwork.subnetwork.self_link}"
+  value = google_compute_subnetwork.subnetwork.self_link
 }
 
 output "subnetwork_self_link" {
-  value = "${google_compute_subnetwork.subnetwork.self_link}"
+  value = google_compute_subnetwork.subnetwork.self_link
 }
 
 output "router_self_link" {
-  value = "${google_compute_router.router.self_link}"
+  value = google_compute_router.router.self_link
 }
 
 output "subnetwork_pods" {
-  value = "${var.subnetwork_pods}"
+  value = var.subnetwork_pods
 }
 
 output "subnetwork_range" {
-  value = "${var.subnetwork_range}"
+  value = var.subnetwork_range
 }
 
 /* provide the literal names of the secondary IP ranges for the pods and services.
@@ -115,3 +115,4 @@ output "gke_pods_1" {
 output "gke_services_1" {
   value = "gke-services-1"
 }
+
