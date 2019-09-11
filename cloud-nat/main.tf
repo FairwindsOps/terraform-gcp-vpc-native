@@ -30,6 +30,26 @@ variable "enable_flow_logs" {
   description = "whether to turn on flow logs or not"
 }
 
+variable "nat_ip_allocate_option" {
+  # https://cloud.google.com/nat/docs/overview#ip_address_allocation
+  description = "AUTO_ONLY or MANUAL_ONLY"
+  default     = "AUTO_ONLY"
+}
+
+variable "cloud_nat_address_count" {
+  # https://cloud.google.com/nat/docs/overview#number_of_nat_ports_and_connections
+  description = "the count of external ip address to assign to the cloud-nat object"
+  default     = 1
+}
+
+locals {
+  ## the following locals modify resource creation behavior depending on var.nat_ip_allocate_option
+  cloud_nat_address_count = "${var.nat_ip_allocate_option == "AUTO_ONLY" ? 0 : var.cloud_nat_address_count}"
+  nat_ips                 = "${var.nat_ip_allocate_option == "AUTO_ONLY" ? "" : join(",", google_compute_address.ip_address.*.self_link)}"
+  manual_nat_router       = "${var.nat_ip_allocate_option == "AUTO_ONLY" ? 0 : 1}"
+  auto_nat_router         = "${var.nat_ip_allocate_option == "AUTO_ONLY" ? 1 : 0}"
+}
+
 #######################
 # Create the network and subnetworks, including secondary IP ranges on subnetworks
 #######################
@@ -61,7 +81,7 @@ resource "google_compute_subnetwork" "subnetwork" {
   }
 
   /* We ignore changes on secondary_ip_range because terraform doesn't list
-    them in the same order every time during runs. */
+                                    them in the same order every time during runs. */
   lifecycle {
     ignore_changes = ["secondary_ip_range"]
   }
@@ -73,11 +93,31 @@ resource "google_compute_router" "router" {
   region  = "${var.region}"
 }
 
+resource "google_compute_address" "ip_address" {
+  # resource only created if var.nat_allocate_option != AUTO_ONLY
+  count  = "${local.cloud_nat_address_count}"
+  name   = "nat-external-address-${count.index}"
+  region = "${var.region}"
+}
+
 resource "google_compute_router_nat" "nat_router" {
+  # resource only created if local.auto_nat_router evaulates to TRUE
+  count                              = "${local.auto_nat_router}"
   name                               = "${var.network_name}"
   router                             = "${google_compute_router.router.name}"
   region                             = "${var.region}"
-  nat_ip_allocate_option             = "AUTO_ONLY"
+  nat_ip_allocate_option             = "${var.nat_ip_allocate_option}"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+}
+
+resource "google_compute_router_nat" "manual_nat_router" {
+  # resource only created if local.manual_nat_router evaulates to TRUE
+  count                              = "${local.manual_nat_router}"
+  name                               = "${var.network_name}"
+  router                             = "${google_compute_router.router.name}"
+  region                             = "${var.region}"
+  nat_ip_allocate_option             = "${var.nat_ip_allocate_option}"
+  nat_ips                            = ["${split(",", local.nat_ips)}"]
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
 
