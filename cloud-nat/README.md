@@ -5,7 +5,7 @@ The set up is the same as for the default module. You'd fill out the network.tf 
 
 ```terraform
 module "network" {
-  source = "git@github.com:FairwindsOps/terraform-gcp-vpc-native.git//cloud-nat?ref=v0.0.1"
+  source = "git@github.com:FairwindsOps/terraform-gcp-vpc-native.git//cloud-nat?ref=v1.1.0"
   // base network parameters
   network_name               = "project-kube-staging-1"
   subnetwork_name            = "project-staging-1"
