@@ -15,7 +15,7 @@ variable "region" {
 #######################
 
 resource "google_compute_network" "shared_vpc" {
-  name                    = "${var.network_name}"
+  name                    = var.network_name
   routing_mode            = "GLOBAL"
   auto_create_subnetworks = "false"
 }
@@ -24,10 +24,11 @@ resource "google_compute_network" "shared_vpc" {
 # Provide outputs to be used in subnetwork and GKE cluster creation
 #######################
 output "shared_vpc" {
-  value = "${google_compute_network.shared_vpc.self_link}"
+  value = google_compute_network.shared_vpc.self_link
 }
 
 output "region" {
   description = "The region in which this network exists"
-  value       = "${var.region}"
+  value       = var.region
 }
+
