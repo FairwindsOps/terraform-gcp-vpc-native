@@ -30,10 +30,33 @@ variable "enable_flow_logs" {
   description = "whether to turn on flow logs or not"
 }
 
-variable "network_description" {
-  default     = ""
-  description = "a description for the VPC in the GCP Console"
+variable "enable_cloud_nat" {
+  # https://cloud.google.com/nat/docs/overview#ip_address_allocation
+  description = "Setup Cloud NAT gateway for VPC"
+  default     = false
 }
+
+variable "nat_ip_allocate_option" {
+  # https://cloud.google.com/nat/docs/overview#ip_address_allocation
+  description = "AUTO_ONLY or MANUAL_ONLY"
+  type        = string
+  default     = "AUTO_ONLY"
+}
+
+variable "cloud_nat_address_count" {
+  # https://cloud.google.com/nat/docs/overview#number_of_nat_ports_and_connections
+  description = "the count of external ip address to assign to the cloud-nat object"
+  type        = number
+  default     = 1
+}
+
+locals {
+  ## the following locals modify resource creation behavior depending on var.nat_ip_allocate_option
+  enable_cloud_nat        = var.enable_cloud_nat == true ? 1 : 0
+  cloud_nat_address_count = var.nat_ip_allocate_option != "AUTO_ONLY" ? var.cloud_nat_address_count * local.enable_cloud_nat : 0
+  nat_ips                 = var.nat_ip_allocate_option != "AUTO_ONLY" ? google_compute_address.ip_address.*.self_link : null
+}
+
 
 #######################
 # Create the network and subnetworks, including secondary IP ranges on subnetworks
@@ -41,7 +64,6 @@ variable "network_description" {
 
 resource "google_compute_network" "network" {
   name                    = var.network_name
-  description             = var.network_description
   routing_mode            = "GLOBAL"
   auto_create_subnetworks = false
 }
@@ -73,6 +95,29 @@ resource "google_compute_subnetwork" "subnetwork" {
   }
 }
 
+resource "google_compute_router" "router" {
+  count   = local.enable_cloud_nat
+  name    = var.network_name
+  network = google_compute_network.network.name
+  region  = var.region
+}
+
+resource "google_compute_address" "ip_address" {
+  count  = local.cloud_nat_address_count
+  name   = "nat-external-address-${count.index}"
+  region = var.region
+}
+
+resource "google_compute_router_nat" "nat_router" {
+  count                              = local.enable_cloud_nat
+  name                               = var.network_name
+  router                             = google_compute_router.router.0.name
+  region                             = var.region
+  nat_ip_allocate_option             = var.nat_ip_allocate_option
+  nat_ips                            = local.nat_ips
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+}
+
 /** provide outputs to be used in GKE cluster creation **/
 output "network_self_link" {
   value = google_compute_network.network.self_link
@@ -84,6 +129,10 @@ output "subnetwork" {
 
 output "subnetwork_self_link" {
   value = google_compute_subnetwork.subnetwork.self_link
+}
+
+output "router_self_link" {
+  value = local.enable_cloud_nat == 1 ? google_compute_router.router.*.self_link : null
 }
 
 output "subnetwork_pods" {

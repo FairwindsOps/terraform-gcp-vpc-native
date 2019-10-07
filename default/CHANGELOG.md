@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Breaking
 
 * Upgraded module to support terraform 0.12.x
+### Added
+* Added Cloud NAT support. See docs for new inputs and logic.
 
 ## 1.0.1
 
