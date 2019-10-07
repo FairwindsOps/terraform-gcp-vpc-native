@@ -30,10 +30,10 @@ variable "enable_flow_logs" {
   description = "whether to turn on flow logs or not"
 }
 
-variable "auto_allocate_nat" {
+variable "nat_ip_allocate_option" {
   # https://cloud.google.com/nat/docs/overview#ip_address_allocation
-  description = "boolean value for enabling auto allocation of cloud nat IP addresses. Default true"
-  default     = true
+  description = "AUTO_ONLY or MANUAL_ONLY"
+  default     = "AUTO_ONLY"
 }
 
 variable "cloud_nat_address_count" {
@@ -43,13 +43,11 @@ variable "cloud_nat_address_count" {
 }
 
 locals {
-  # if auto_allocate_nat is false, set cloud_nat_address_count to provided variable
-  cloud_nat_address_count = var.auto_allocate_nat == true ? 0 : var.cloud_nat_address_count
-  # if auto_allocate_nat is false, set nat_ip_allocate to MANUAL_ONLY
-  nat_ip_allocate_option = var.auto_allocate_nat == true ? "AUTO_ONLY" : "MANUAL_ONLY"
-  # if auto_allocate_nat is false, set local to array of generated google_compute_address resources
-  nat_ips = var.auto_allocate_nat == true ? null : google_compute_address.ip_address[*].self_link
+  ## the following locals modify resource creation behavior depending on var.nat_ip_allocate_option
+  cloud_nat_address_count = var.nat_ip_allocate_option == "AUTO_ONLY" ? 0 : var.cloud_nat_address_count
+  nat_ips                 = var.nat_ip_allocate_option == "AUTO_ONLY" ? null : google_compute_address.ip_address.*.self_link
 }
+
 
 #######################
 # Create the network and subnetworks, including secondary IP ranges on subnetworks
@@ -104,7 +102,7 @@ resource "google_compute_router_nat" "nat_router" {
   name                               = var.network_name
   router                             = google_compute_router.router.name
   region                             = var.region
-  nat_ip_allocate_option             = local.nat_ip_allocate_option
+  nat_ip_allocate_option             = var.nat_ip_allocate_option
   nat_ips                            = local.nat_ips
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }

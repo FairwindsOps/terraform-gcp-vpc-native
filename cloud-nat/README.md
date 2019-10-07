@@ -3,9 +3,9 @@ The `cloud-nat` module is similar to the `default` module, but it additionally c
 
 The set up is the same as for the default module. You'd fill out the network.tf like so, specifying the path of the cloud-nat module instead:
 
-```
+```terraform
 module "network" {
-  source = "git@github.com:FairwindsOps/terraform-gcp-vpc-native.git//cloud-nat?ref=v0.0.1"
+  source = "git@github.com:FairwindsOps/terraform-gcp-vpc-native.git//cloud-nat?ref=cloud-nat-v1.1.0"
   // base network parameters
   network_name               = "project-kube-staging-1"
   subnetwork_name            = "project-staging-1"
@@ -17,5 +17,9 @@ module "network" {
   subnetwork_pods      = "10.128.64.0/18"
   subnetwork_services  = "10.128.32.0/20"
 
+  // Optional Variables 
+  // AUTO_ONLY or MANUAL_ONLY NAT allocation
+  nat_ip_allocate_option = "MANUAL_ONLY"
+  cloud_nat_address_count = 2
 }
 ```
