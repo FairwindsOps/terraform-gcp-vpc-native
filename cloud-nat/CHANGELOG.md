@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 2.0.0
+Note, this module should be considered deprecated. Use the `default` module with cloud-nat options.
+### Breaking
+* Updated module to support terraform 0.12
+
 ## 1.1.0
 ### Added
 * Ability to configure nat router with `var.nat_ip_allocate_option`
