@@ -1,5 +1,7 @@
 ### Default module example parameters
-To use the `default` module with a VPC-native-ready public network, you'd fill out your `network.tf` like so: 
+The `default` module will create a VPC-native network for Kubernetes clusters. This module can be configured to provision a Cloud NAT gateway. The Cloud NAT gateway can also be configured with `AUTO_ONLY` or `MANUAL_ONLY` options. If `MANUAL_ONLY` is chosen, `cloud_nat_address_count` can be used to select the desired number of public IP addresses. 
+
+Fill out your `network.tf` like so: 
 
 ```
 module "network" {
@@ -15,5 +17,9 @@ module "network" {
   subnetwork_pods      = "10.128.64.0/18"
   subnetwork_services  = "10.128.32.0/20"
 
+  //optional cloud-nat inputs
+  enable_cloud_nat = true
+  nat_ip_allocation_option = "MANUAL_ONLY"
+  cloud_nat_ip_count = 2
 }
 ```
