@@ -76,7 +76,6 @@ resource "google_compute_subnetwork" "subnetwork" {
   network                  = google_compute_network.network.self_link
   region                   = var.region
   private_ip_google_access = true
-  enable_flow_logs         = var.enable_flow_logs
 
   secondary_ip_range {
     range_name    = "gke-pods-1"
