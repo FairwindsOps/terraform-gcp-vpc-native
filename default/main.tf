@@ -120,7 +120,7 @@ resource "google_compute_router_nat" "nat_router" {
   region                             = var.region
   nat_ip_allocate_option             = var.nat_ip_allocate_option
   nat_ips                            = local.nat_ips
-  min_ports_per_vm                   = var.min_ports_per_vm
+  min_ports_per_vm                   = var.cloud_nat_min_ports_per_vm
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
 
