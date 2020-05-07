@@ -50,6 +50,12 @@ variable "cloud_nat_address_count" {
   default     = 1
 }
 
+variable "cloud_nat_min_ports_per_vm" {
+  description = "Minimum number of ports allocated to a VM from this NAT."
+  type        = number
+  default     = 64
+}
+
 locals {
   ## the following locals modify resource creation behavior depending on var.nat_ip_allocate_option
   enable_cloud_nat        = var.enable_cloud_nat == true ? 1 : 0
@@ -114,6 +120,7 @@ resource "google_compute_router_nat" "nat_router" {
   region                             = var.region
   nat_ip_allocate_option             = var.nat_ip_allocate_option
   nat_ips                            = local.nat_ips
+  min_ports_per_vm                   = var.min_ports_per_vm
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
 
