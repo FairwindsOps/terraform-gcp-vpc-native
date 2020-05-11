@@ -26,10 +26,6 @@ variable "region" {
   description = "region to use"
 }
 
-variable "enable_flow_logs" {
-  description = "whether to turn on flow logs or not"
-}
-
 variable "enable_cloud_nat" {
   # https://cloud.google.com/nat/docs/overview#ip_address_allocation
   description = "Setup Cloud NAT gateway for VPC"
