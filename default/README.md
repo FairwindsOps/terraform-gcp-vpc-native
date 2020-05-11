@@ -13,9 +13,9 @@ module "network" {
   enable_flow_logs           = "false"
 
   //specify the staging subnetwork primary and secondary CIDRs for IP aliasing
-  subnetwork_range    = "10.68.64.0/21"
-  subnetwork_pods     = "10.64.0.0/14"
-  subnetwork_services = "10.68.0.0/18"
+  subnetwork_range    = "10.128.64.0/21"
+  subnetwork_pods     = "10.128.0.0/14"
+  subnetwork_services = "10.128.0.0/18"
 
   //optional cloud-nat inputs
   enable_cloud_nat = true
