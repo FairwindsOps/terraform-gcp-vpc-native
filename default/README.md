@@ -1,7 +1,7 @@
 ### Default module example parameters
-The `default` module will create a VPC-native network for Kubernetes clusters. This module can be configured to provision a Cloud NAT gateway. The Cloud NAT gateway can also be configured with `AUTO_ONLY` or `MANUAL_ONLY` options. If `MANUAL_ONLY` is chosen, `cloud_nat_address_count` can be used to select the desired number of public IP addresses. 
+The `default` module will create a VPC-native network for Kubernetes clusters. This module can be configured to provision a Cloud NAT gateway. The Cloud NAT gateway can also be configured with `AUTO_ONLY` or `MANUAL_ONLY` options. If `MANUAL_ONLY` is chosen, `cloud_nat_address_count` can be used to select the desired number of public IP addresses.
 
-Fill out your `network.tf` like so: 
+Fill out your `network.tf` like so:
 
 ```
 module "network" {
@@ -13,9 +13,9 @@ module "network" {
   enable_flow_logs           = "false"
 
   //specify the staging subnetwork primary and secondary CIDRs for IP aliasing
-  subnetwork_range     = "10.128.0.0/20"
-  subnetwork_pods      = "10.128.64.0/18"
-  subnetwork_services  = "10.128.32.0/20"
+  subnetwork_range    = "10.68.64.0/21"
+  subnetwork_pods     = "10.64.0.0/14"
+  subnetwork_services = "10.68.0.0/18"
 
   //optional cloud-nat inputs
   enable_cloud_nat = true
