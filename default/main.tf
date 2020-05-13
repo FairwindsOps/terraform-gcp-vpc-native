@@ -26,10 +26,6 @@ variable "region" {
   description = "region to use"
 }
 
-variable "enable_flow_logs" {
-  description = "whether to turn on flow logs or not"
-}
-
 variable "enable_cloud_nat" {
   # https://cloud.google.com/nat/docs/overview#ip_address_allocation
   description = "Setup Cloud NAT gateway for VPC"
@@ -48,6 +44,17 @@ variable "cloud_nat_address_count" {
   description = "the count of external ip address to assign to the cloud-nat object"
   type        = number
   default     = 1
+}
+
+variable "cloud_nat_min_ports_per_vm" {
+  description = "Minimum number of ports allocated to a VM from this NAT."
+  type        = number
+  default     = 64
+}
+
+variable "cloud_nat_log_config_filter" {
+  description = "Specifies the desired filtering of logs on this NAT"
+  default     = null
 }
 
 locals {
@@ -114,7 +121,16 @@ resource "google_compute_router_nat" "nat_router" {
   region                             = var.region
   nat_ip_allocate_option             = var.nat_ip_allocate_option
   nat_ips                            = local.nat_ips
+  min_ports_per_vm                   = var.cloud_nat_min_ports_per_vm
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+
+  dynamic "log_config" {
+    for_each = var.cloud_nat_log_config_filter == null ? [] : list(true)
+    content {
+      enable = var.cloud_nat_log_config_filter == null ? false : true
+      filter = var.cloud_nat_log_config_filter
+    }
+  }
 }
 
 /** provide outputs to be used in GKE cluster creation **/
