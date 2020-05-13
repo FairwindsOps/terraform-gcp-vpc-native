@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 * added variable for `min_ports_per_vm`
+* added variable `cloud_nat_log_config_filter`
 
 ### Removed
 * removed unused variable `enable_flow_logs`
