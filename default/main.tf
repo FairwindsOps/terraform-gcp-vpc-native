@@ -127,7 +127,7 @@ resource "google_compute_router_nat" "nat_router" {
   dynamic "log_config" {
     for_each = var.cloud_nat_log_config_filter == null ? [] : list(true)
     content {
-      enable = var.cloud_nat_log_config_filter != null ? true : false
+      enable = var.cloud_nat_log_config_filter == null ? false : true
       filter = var.cloud_nat_log_config_filter
     }
   }
