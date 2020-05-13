@@ -52,6 +52,11 @@ variable "cloud_nat_min_ports_per_vm" {
   default     = 64
 }
 
+variable "cloud_nat_log_config_filter" {
+  description = "Specifies the desired filtering of logs on this NAT"
+  default     = null
+}
+
 locals {
   ## the following locals modify resource creation behavior depending on var.nat_ip_allocate_option
   enable_cloud_nat        = var.enable_cloud_nat == true ? 1 : 0
@@ -118,6 +123,11 @@ resource "google_compute_router_nat" "nat_router" {
   nat_ips                            = local.nat_ips
   min_ports_per_vm                   = var.cloud_nat_min_ports_per_vm
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+
+  log_config {
+    enable = var.cloud_nat_log_config_filter != null ? true : false
+    filter = var.cloud_nat_log_config_filter
+  }
 }
 
 /** provide outputs to be used in GKE cluster creation **/
