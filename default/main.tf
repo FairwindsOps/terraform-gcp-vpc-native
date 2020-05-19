@@ -124,12 +124,9 @@ resource "google_compute_router_nat" "nat_router" {
   min_ports_per_vm                   = var.cloud_nat_min_ports_per_vm
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 
-  dynamic "log_config" {
-    for_each = var.cloud_nat_log_config_filter == null ? [] : list(true)
-    content {
-      enable = var.cloud_nat_log_config_filter == null ? false : true
-      filter = var.cloud_nat_log_config_filter
-    }
+  log_config {
+    enable = var.cloud_nat_log_config_filter == null ? false : true
+    filter = var.cloud_nat_log_config_filter == null ? "ALL" : var.cloud_nat_log_config_filter
   }
 }
 
