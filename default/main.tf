@@ -52,6 +52,13 @@ variable "cloud_nat_min_ports_per_vm" {
   default     = 64
 }
 
+variable "cloud_nat_tcp_transitory_idle_timeout_sec" {
+  # https://cloud.google.com/nat/docs/overview#specs-timeouts
+  description = "Timeout in seconds for TCP transitory connections."
+  type        = number
+  default     = 30
+}
+
 variable "cloud_nat_log_config_filter" {
   description = "Specifies the desired filtering of logs on this NAT"
   default     = null
@@ -123,6 +130,7 @@ resource "google_compute_router_nat" "nat_router" {
   nat_ips                            = local.nat_ips
   min_ports_per_vm                   = var.cloud_nat_min_ports_per_vm
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+  tcp_transitory_idle_timeout_sec    = var.cloud_nat_tcp_transitory_idle_timeout_sec
 
   log_config {
     enable = var.cloud_nat_log_config_filter == null ? false : true
