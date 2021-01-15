@@ -75,10 +75,10 @@ variable "subnetwork_log_config" {
   description = "settings for subnetwork flow logs"
   default = {
     aggregation_interval = "INTERVAL_5_SEC"
-    flow_sampling = 0.5
-    metadata = "INCLUDE_ALL_METADATA"
-    metadata_fields = []
-    filter_expr = ""
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+    metadata_fields      = []
+    filter_expr          = ""
   }
 }
 
@@ -105,7 +105,7 @@ resource "google_compute_network" "network" {
 resource "google_compute_subnetwork" "subnetwork" {
   name                     = var.subnetwork_name
   ip_cidr_range            = var.subnetwork_range
-  network                  = google_compute_network.network.self_link
+  network                  = var.shared_vpc
   region                   = var.region
   private_ip_google_access = true
 
