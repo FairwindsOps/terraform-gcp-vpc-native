@@ -1,3 +1,5 @@
+> :warning: **This module has been deprecated. Please use [the `default` module](../default/README.md) and supply the `enable_cloud_nat = true` argument instead.**
+
 ### Cloud NAT module example parameters
 The `cloud-nat` module is similar to the `default` module, but it additionally creates a Cloud Router and Cloud NAT. Cloud NAT is a managed offering that provides a managed NAT gateway for the network. You can use this module to build a VPC-native GKE cluster with private nodes that have no public IP addresses. Internet traffic from the nodes is routed through the Cloud NAT.
 

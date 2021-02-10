@@ -1,7 +1,6 @@
 # Terraform GCP VPC-Native Network Module
 This repository contains VPC configuration intended for use with VPC-native GKE clusters created with the [terraform-gke](https://github.com/FairwindsOps/terraform-gke) module. The `default` directory contains a standard VPC module intended for use with VPC-native GKE clusters, which has public networking.
 
-
 ## How to source modules from this repository
 * Just add a `network.tf` file to the `terraform` directory of your inventory item that sources the module:
 ```
