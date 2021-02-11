@@ -19,7 +19,7 @@ module "network" {
 
   //optional cloud-nat inputs
   enable_cloud_nat = true
-  nat_ip_allocation_option = "MANUAL_ONLY"
-  cloud_nat_ip_count = 2
+  nat_ip_allocate_option = "MANUAL_ONLY"
+  cloud_nat_address_count = 2
 }
 ```
